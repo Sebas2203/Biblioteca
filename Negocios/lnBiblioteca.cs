@@ -34,5 +34,32 @@ namespace Negocios
                 throw;
             }
         }
+
+        public string RegistrarLibro(string titulo, string editorial, int paginas,
+                                     string nombreAutor, string apellidosAutor, string nacionalidad, int cantidadEjemplares)
+        {
+            try
+            {
+
+
+                //instanciar la capa de datos
+                Datos.ldBiblioteca datos = new Datos.ldBiblioteca();
+
+                //se ejecuta la llamada
+                var resultado = datos.RegistrarLibro(titulo, editorial, paginas, nombreAutor, 
+                                                        apellidosAutor, nacionalidad, cantidadEjemplares);
+
+                //si se require, se realiza una validacion de la info obtenida de la capa de datos
+
+                //retorna el resultado
+                return resultado;
+
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

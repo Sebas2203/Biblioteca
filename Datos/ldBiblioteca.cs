@@ -29,8 +29,8 @@ namespace Datos
 
 
 
-        public string RegistrarLibro(string titulo, string editorial, int paginas, string codigoLibro,
-                                     string nombreAutor, string apellidosAutor, string nacionalidad, string codigoAutor, int cantidadEjemplares)
+        public string RegistrarLibro(string titulo, string editorial, int paginas,
+                                     string nombreAutor, string apellidosAutor, string nacionalidad, int cantidadEjemplares)
         {
             //using (SqlConnection con = new SqlConnection(_connection))
             //{

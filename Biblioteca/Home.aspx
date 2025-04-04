@@ -11,12 +11,7 @@
     <form id="form1" runat="server">
         <div>
             <header>
-                <div class="logo">
-                    <img src="content\media\LogoUH.png" alt="logouh" />
-                </div>
-                <div>
-                    <asp:ImageButton ID="btnCarrito" runat="server" ImageUrl="~/Content/Media/carrito.png" CssClass="btnCarrito" />
-                </div>
+                <a href="RegistrarLibro.aspx">Registrar Libro</a>
             </header>
 
             <div class="contenedor">
@@ -24,6 +19,15 @@
                 <div id="divArticulos" runat="server">
                     <asp:GridView ID="gridLibros" runat="server" CssClass="gridview tablaArticulos" AutoGenerateColumns="true"></asp:GridView>
                 </div>
+            </div>
+
+            <div class="Buscar">
+                <h1>Buscar Libro</h1>
+                <p>Autor</p>
+                <asp:TextBox ID="BuscarAutor" runat="server" CssClass="BuscarLibroTB" />
+                <p>Titulo Libro</p>
+                <asp:TextBox ID="BuscarTitulo" runat="server" CssClass="BuscarLibroTB" />
+                <asp:Button ID="BuscarLibroBTN" runat="server" Text="Buscar" OnClick="BuscarLibroBTN_Click" />
             </div>
 
         </div>
