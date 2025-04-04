@@ -14,12 +14,6 @@
                 <div class="logo">
                     <img src="content\media\LogoUH.png" alt="logouh" />
                 </div>
-                <nav>
-                    <ul>
-                        <li><a href="Home.aspx" runat="server">Home</a></li>
-                        <!--<li><a href="Carrito.aspx" runat="server">Carrito</a></li>-->
-                    </ul>
-                </nav>
                 <div>
                     <asp:ImageButton ID="btnCarrito" runat="server" ImageUrl="~/Content/Media/carrito.png" CssClass="btnCarrito" />
                 </div>

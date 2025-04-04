@@ -10,28 +10,24 @@ namespace Negocios
     public class lnBiblioteca
     {
         //metodo que consulta articulos en la capa de datos
-        public DataTable ConsultarLibro(int idLibro, string titulo)
+        public DataTable BuscarLibros(string nombreAutor, string tituloParcial)
         {
             try
             {
-                //validar los tipos de datos
-                if (idLibro >= 0)
-                {
-                    //instanciar la capa de datos
-                    Datos.ldBiblioteca datos = new Datos.ldBiblioteca();
 
-                    //se ejecuta la llamada
-                    var resultado = datos.ConsultarLibro(idLibro, titulo);
 
-                    //si se require, se realiza una validacion de la info obtenida de la capa de datos
+                //instanciar la capa de datos
+                Datos.ldBiblioteca datos = new Datos.ldBiblioteca();
 
-                    //retorna el resultado
-                    return resultado;
-                }
-                else
-                {
-                    throw new Exception("El id del Libro no puede ser menor o igual a 0");
-                }
+                //se ejecuta la llamada
+                var resultado = datos.BuscarLibros(nombreAutor, tituloParcial);
+
+                //si se require, se realiza una validacion de la info obtenida de la capa de datos
+
+                //retorna el resultado
+                return resultado;
+
+
             }
             catch (Exception)
             {

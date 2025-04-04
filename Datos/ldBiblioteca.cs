@@ -11,46 +11,62 @@ namespace Datos
 {
     public class ldBiblioteca
     {
-        private string connectionString = "tu_cadena_de_conexion_aqui";
+        #region connection string   
+
+        private SqlConnection _connection;
+
+        public ldBiblioteca()
+        {
+            initConnection();
+        }
+        public void initConnection()
+        {
+            _connection = new SqlConnection();
+            _connection.ConnectionString = ConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
+        }
+
+        #endregion
+
+
 
         public string RegistrarLibro(string titulo, string editorial, int paginas, string codigoLibro,
                                      string nombreAutor, string apellidosAutor, string nacionalidad, string codigoAutor, int cantidadEjemplares)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            //using (SqlConnection con = new SqlConnection(_connection))
+            //{
+            try
             {
-                try
+                _connection.Open();
+                SqlCommand cmd = new SqlCommand("dbo.RegistrarLibro", _connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                // Parámetros de entrada
+                cmd.Parameters.AddWithValue("@titulo", titulo);
+                cmd.Parameters.AddWithValue("@editorial", editorial);
+                cmd.Parameters.AddWithValue("@paginas", paginas);
+                cmd.Parameters.AddWithValue("@nombre_autor", nombreAutor);
+                cmd.Parameters.AddWithValue("@apellidos_autor", apellidosAutor);
+                cmd.Parameters.AddWithValue("@nacionalidad", nacionalidad);
+                cmd.Parameters.AddWithValue("@cantidad_ejemplares", cantidadEjemplares);
+
+                // Parámetro de salida
+                SqlParameter outputParam = new SqlParameter("@mensaje", SqlDbType.NVarChar, 100)
                 {
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand("RegistrarLibro", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    Direction = ParameterDirection.Output
+                };
+                cmd.Parameters.Add(outputParam);
 
-                    // Parámetros de entrada
-                    cmd.Parameters.AddWithValue("@titulo", titulo);
-                    cmd.Parameters.AddWithValue("@editorial", editorial);
-                    cmd.Parameters.AddWithValue("@paginas", paginas);
-                    cmd.Parameters.AddWithValue("@nombre_autor", nombreAutor);
-                    cmd.Parameters.AddWithValue("@apellidos_autor", apellidosAutor);
-                    cmd.Parameters.AddWithValue("@nacionalidad", nacionalidad);
-                    cmd.Parameters.AddWithValue("@cantidad_ejemplares", cantidadEjemplares);
+                cmd.ExecuteNonQuery();
 
-                    // Parámetro de salida
-                    SqlParameter outputParam = new SqlParameter("@mensaje", SqlDbType.NVarChar, 100)
-                    {
-                        Direction = ParameterDirection.Output
-                    };
-                    cmd.Parameters.Add(outputParam);
-
-                    cmd.ExecuteNonQuery();
-
-                    // Retornar el mensaje del SP
-                    return outputParam.Value.ToString();
-                }
-                catch (Exception ex)
-                {
-                    return "Error: " + ex.Message;
-                }
+                // Retornar el mensaje del SP
+                return outputParam.Value.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
             }
         }
+        //}
 
         public DataTable BuscarLibros(string nombreAutor, string tituloParcial)
         {
@@ -58,11 +74,11 @@ namespace Datos
 
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    con.Open(); // Abrimos la conexión
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                _connection.Open(); // Abrimos la conexión
 
-                    using (SqlCommand cmd = new SqlCommand("BuscarLibros", con))
+                using (SqlCommand cmd = new SqlCommand("dbo.BuscarLibros", _connection))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
@@ -75,7 +91,7 @@ namespace Datos
                             da.Fill(dt);
                         }
                     }
-                }
+               //}
             }
             catch (SqlException ex)
             {

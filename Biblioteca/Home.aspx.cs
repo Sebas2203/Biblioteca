@@ -17,7 +17,7 @@ namespace Biblioteca
             Negocios.lnBiblioteca negocios = new Negocios.lnBiblioteca();
 
             //ejecutar el metodo
-            var resultado = negocios.ConsultarLibro(0, string.Empty);
+            var resultado = negocios.BuscarLibros("", string.Empty);
 
             //mostrar la tabla en el gridview
             gridLibros.DataSource = resultado;
