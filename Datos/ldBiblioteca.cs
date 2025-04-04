@@ -11,66 +11,87 @@ namespace Datos
 {
     public class ldBiblioteca
     {
-        #region connection string
+        private string connectionString = "tu_cadena_de_conexion_aqui";
 
-        private SqlConnection _connection;
-
-        public ldBiblioteca()
+        public string RegistrarLibro(string titulo, string editorial, int paginas, string codigoLibro,
+                                     string nombreAutor, string apellidosAutor, string nacionalidad, string codigoAutor, int cantidadEjemplares)
         {
-            initConnection();
-        }
-        public void initConnection()
-        {
-            _connection = new SqlConnection();
-            _connection.ConnectionString = ConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
-        }
-
-        #endregion
-
-        #region Metodos de acceso a la db
-
-        //me devuelve un select
-        public DataTable ConsultarLibro(int idlibro, string titulo)
-        {
-            try
+            using (SqlConnection con = new SqlConnection(connectionString))
             {
-                //definir el comando para ejecutrar el SQL
-                using (SqlCommand cmd = new SqlCommand("dbo.spConsultaLibro", _connection))
+                try
                 {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("RegistrarLibro", con);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    //agregar los parametros para realizar la llamada
-                    cmd.Parameters.AddWithValue("@idlibro", idlibro <= 0 ? (object)DBNull.Value : idlibro);
-                    cmd.Parameters.AddWithValue("@titulo", string.IsNullOrEmpty(titulo) ? (object)DBNull.Value : titulo);
+                    // Parámetros de entrada
+                    cmd.Parameters.AddWithValue("@titulo", titulo);
+                    cmd.Parameters.AddWithValue("@editorial", editorial);
+                    cmd.Parameters.AddWithValue("@paginas", paginas);
+                    cmd.Parameters.AddWithValue("@nombre_autor", nombreAutor);
+                    cmd.Parameters.AddWithValue("@apellidos_autor", apellidosAutor);
+                    cmd.Parameters.AddWithValue("@nacionalidad", nacionalidad);
+                    cmd.Parameters.AddWithValue("@cantidad_ejemplares", cantidadEjemplares);
 
-                    //definir un adapter -> convierte los tipos de datos del select a un datatable
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    // Parámetro de salida
+                    SqlParameter outputParam = new SqlParameter("@mensaje", SqlDbType.NVarChar, 100)
                     {
-                        //crear un datatable para almacenar los datos
-                        DataTable resultado = new DataTable("dtLibros");
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(outputParam);
 
-                        //abrir la conexion a la db
-                        _connection.Open();
+                    cmd.ExecuteNonQuery();
 
-                        //llenar el datatable con los datos del select
-                        adapter.Fill(resultado);
-                        return resultado;
-                    }
-
-
+                    // Retornar el mensaje del SP
+                    return outputParam.Value.ToString();
                 }
+                catch (Exception ex)
+                {
+                    return "Error: " + ex.Message;
+                }
+            }
+        }
+
+        public DataTable BuscarLibros(string nombreAutor, string tituloParcial)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open(); // Abrimos la conexión
+
+                    using (SqlCommand cmd = new SqlCommand("BuscarLibros", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        // Parámetros opcionales (si están vacíos, se envía NULL)
+                        cmd.Parameters.AddWithValue("@nombre_autor", string.IsNullOrEmpty(nombreAutor) ? (object)DBNull.Value : nombreAutor);
+                        cmd.Parameters.AddWithValue("@titulo_parcial", string.IsNullOrEmpty(tituloParcial) ? (object)DBNull.Value : tituloParcial);
+
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            da.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                // Manejo de errores de SQL (problemas con la base de datos)
+                Console.WriteLine("Error de SQL: " + ex.Message);
             }
             catch (Exception ex)
             {
-                throw ex;
+                // Manejo de errores generales
+                Console.WriteLine("Error general: " + ex.Message);
             }
-            finally
-            {
-                //cerrar la conexion a la db
-                if (_connection.State == ConnectionState.Open) { _connection.Close(); };
-            }
+
+            return dt;
         }
 
-        #endregion
+
+
     }
 }
